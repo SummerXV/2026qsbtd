@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Sheet } from './Sheet';
 import { Cake } from './Cake';
 import { ZoomableImage } from './ZoomableImage';
@@ -60,7 +60,7 @@ export function Book() {
   // Sheet 3: Page 6 (Text) / Page 7 (Blank)
   // Sheet 4: Page 8 (Cake) / Back Cover
 
-  const sheets = [
+  const sheets: { front: React.ReactNode; back: React.ReactNode }[] = [
     // Sheet 0: Cover & Page 1
     {
       front: (
@@ -88,7 +88,7 @@ export function Book() {
 
             <h1 className="text-6xl font-heading font-bold text-blue-500 mb-2 drop-shadow-sm mt-10">Happy</h1>
             <h1 className="text-7xl font-heading font-bold text-pink-500 mb-4 drop-shadow-sm">Birthday</h1>
-            <p className="text-gray-500 font-hand text-xl mb-12">To someone truly wonderful!</p>
+            <p className="text-gray-500 font-hand text-xl mb-12">To Qianqian Shao 💗</p>
 
             <div className="inline-block px-8 py-3 bg-yellow-400 rounded-full font-heading font-bold text-gray-800 shadow-lg uppercase tracking-wider">
               Open Card
@@ -270,7 +270,7 @@ export function Book() {
       {sheets.map((sheet, i) => {
         const isFlipped = i <= flippedIndex;
         
-        let zIndex;
+        let zIndex: number;
         if (i === flippingIndex) {
           zIndex = 100;
         } else {

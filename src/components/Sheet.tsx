@@ -1,5 +1,5 @@
+import React, { ReactNode } from 'react';
 import { motion } from 'motion/react';
-import { ReactNode } from 'react';
 
 interface SheetProps {
   front: ReactNode;
@@ -10,7 +10,7 @@ interface SheetProps {
   onFlipComplete: () => void;
 }
 
-export function Sheet({ front, back, isFlipped, zIndex, onFlip, onFlipComplete }: SheetProps) {
+export const Sheet: React.FC<SheetProps> = ({ front, back, isFlipped, zIndex, onFlip, onFlipComplete }) => {
   return (
     <motion.div
       className="absolute top-0 right-0 w-1/2 h-full origin-left cursor-pointer preserve-3d"
