@@ -22,9 +22,11 @@ const PageContent = ({ children, isVisible, delay = 0.3 }: { children: React.Rea
 };
 
 export function Book() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const flipSfxRef = useRef<HTMLAudioElement | null>(null);
+  const carSfxRef = useRef<HTMLAudioElement | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
   const bgmStartedRef = useRef(false);
+  const [cakeResetToken, setCakeResetToken] = useState(0);
   const [flippedIndex, setFlippedIndex] = useState(-1);
   const [flippingIndex, setFlippingIndex] = useState(-1);
   const [snowflakes, setSnowflakes] = useState<{ id: number; left: string; delay: string; size: string }[]>([]);
@@ -35,18 +37,18 @@ export function Book() {
   const rainRef = useRef<CelebrationEmojiRainRef>(null);
 
   useEffect(() => {
-    // Prefer local assets (put files in `public/audio/...`), fallback to remote.
-    audioRef.current = new Audio('/audio/page-flip.mp3');
-    audioRef.current.volume = 0.5;
+    // Page flip sound
+    flipSfxRef.current = new Audio('/music/ding.mp3');
+    flipSfxRef.current.volume = 0.3;
 
-    bgmRef.current = new Audio('/music/bgm.mp3');
+    // RV sound
+    carSfxRef.current = new Audio('/music/car.mp3');
+    carSfxRef.current.volume = 0.55;
+
+    // Background music (starts on first user interaction; loops forever)
+    bgmRef.current = new Audio('/music/happy_birthday.mp3');
     bgmRef.current.loop = true;
-    bgmRef.current.volume = 0.25;
-
-    const onFlipError = () => {
-      if (audioRef.current) audioRef.current.src = 'https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3';
-    };
-    audioRef.current.addEventListener('error', onFlipError, { once: true });
+    bgmRef.current.volume = 0.22;
   }, []);
 
   const triggerSnow = () => {
@@ -77,6 +79,17 @@ export function Book() {
   const triggerRv = () => {
     if (showRv) return;
     setShowRv(true);
+    const sfx = carSfxRef.current;
+    if (sfx) {
+      try {
+        sfx.currentTime = 0;
+      } catch {
+        // ignore
+      }
+      sfx.play().catch(() => {
+        // ignore autoplay/missing file errors
+      });
+    }
     setTimeout(() => setShowRv(false), 6500);
   };
 
@@ -90,11 +103,17 @@ export function Book() {
     rainRef.current?.celebrate();
   }, []);
 
-  const playSound = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(e => console.log("Audio play failed", e));
+  const playFlipSfx = () => {
+    const sfx = flipSfxRef.current;
+    if (!sfx) return;
+    try {
+      sfx.currentTime = 0;
+    } catch {
+      // ignore
     }
+    sfx.play().catch(() => {
+      // ignore autoplay/missing file errors
+    });
   };
 
   const startBgmOnce = () => {
@@ -110,7 +129,12 @@ export function Book() {
   const handleFlip = (index: number) => {
     if (flippingIndex !== -1) return;
 
-    playSound(); 
+    // Clear celebration emojis when turning pages so they don't "come back"
+    // when returning to this spread.
+    rainRef.current?.clear();
+    setCakeResetToken((t) => t + 1);
+
+    playFlipSfx();
     startBgmOnce();
     setFlippingIndex(index);
     
@@ -158,9 +182,16 @@ export function Book() {
             <h1 className="text-7xl font-heading font-bold text-pink-500 mb-4 drop-shadow-sm">Birthday</h1>
             <p className="text-gray-500 font-hand text-xl mb-12">To Qianqian Shao 💗</p>
 
-            <div className="inline-block px-8 py-3 bg-yellow-400 rounded-full font-heading font-bold text-gray-800 shadow-lg uppercase tracking-wider">
+            <button
+              type="button"
+              className="inline-block px-8 py-3 bg-yellow-400 rounded-full font-heading font-bold text-gray-800 shadow-lg uppercase tracking-wider hover:bg-yellow-300 transition-colors"
+              onClick={() => {
+                // Start music even if the user doesn't flip (but click will usually bubble to flip).
+                startBgmOnce();
+              }}
+            >
               Open Card
-            </div>
+            </button>
 
             <div className="absolute bottom-12 w-full flex justify-center space-x-8 opacity-80">
                <PartyPopper className="text-yellow-500 w-8 h-8" />
@@ -376,7 +407,7 @@ export function Book() {
              </div>
 
               <div className="absolute inset-0 flex items-center justify-center p-8">
-                <Cake onCelebrate={handleCelebrate} />
+                <Cake onCelebrate={handleCelebrate} resetToken={cakeResetToken} />
               </div>
              
              <div className="absolute bottom-12 flex space-x-6 opacity-40">
@@ -395,7 +426,7 @@ export function Book() {
         </div>
       )
     }
-  ], [flippedIndex, showSnowman, showInfj, showRv, showSummerHeart, handleCelebrate]);
+  ], [flippedIndex, showSnowman, showInfj, showRv, showSummerHeart, cakeResetToken, handleCelebrate]);
 
   return (
     <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">

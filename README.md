@@ -38,7 +38,9 @@ npm run dev
 
 当前代码默认会尝试加载以下文件：
 
-- **翻页音效**: `public/audio/page-flip.mp3`
-- **背景音乐**: `public/music/bgm.mp3`
+- **背景音乐（循环）**: `public/music/happy_birthday.mp3`
+- **翻页音效**: `public/music/ding.mp3`
+- **礼花音效（吹蜡烛触发彩带时）**: `public/music/firework.mp3`
+- **房车音效（点击“房车旅行”时）**: `public/music/car.mp3`
 
-把你的 mp3 放到对应位置即可生效（翻页音效若不存在会自动回退到一个远程音效；背景音乐不存在则会静默跳过）。
+把你的 mp3 放到对应位置即可生效（浏览器通常禁止无交互自动播放，所以背景音乐会在首次翻页或点击 `Open Card` 后开始播放）。

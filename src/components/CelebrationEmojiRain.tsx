@@ -38,15 +38,16 @@ export const CelebrationEmojiRain = forwardRef<CelebrationEmojiRainRef>((_, ref)
 
   const emojiPicker = useMemo(() => {
     const hearts = ['❤️', '💖', '💗', '💓', '💕', '💞', '💝', '🧡', '💛', '💚', '💙', '💜'];
-    const others = ['🎈', '☃️', '🧙‍♂️'];
+    const others = ['🎈', '☃️', '🧙‍♀️'];
     const heartWeight = 5;
     const giftWeight = hearts.length * heartWeight; // gifts as frequent as all hearts combined
+    const otherWeight = 8; // make non-heart/gift clearly visible
 
     return () =>
       pickWeighted<string>([
         { value: '🎁', weight: giftWeight },
         ...hearts.map((h) => ({ value: h, weight: heartWeight })),
-        ...others.map((o) => ({ value: o, weight: 2 })),
+        ...others.map((o) => ({ value: o, weight: otherWeight })),
       ]);
   }, []);
 
@@ -59,7 +60,7 @@ export const CelebrationEmojiRain = forwardRef<CelebrationEmojiRainRef>((_, ref)
     const height = container.clientHeight;
     if (width <= 2 || height <= 2) return;
 
-    const count = 55;
+    const count = 100;
     const baseFontPx = Math.max(26, Math.min(44, Math.floor(width / 12)));
 
     const nextItems: EmojiItem[] = Array.from({ length: count }).map((_, i) => {

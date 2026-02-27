@@ -1,9 +1,19 @@
 import { motion } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 
-export function Cake({ onCelebrate }: { onCelebrate?: () => void }) {
+export function Cake({ onCelebrate, resetToken }: { onCelebrate?: () => void; resetToken?: number }) {
   const [candlesBlown, setCandlesBlown] = useState(false);
+  const fireworkSfxRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    fireworkSfxRef.current = new Audio('/music/firework.mp3');
+    fireworkSfxRef.current.volume = 0.7;
+  }, []);
+
+  useEffect(() => {
+    setCandlesBlown(false);
+  }, [resetToken]);
 
   const blowCandles = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -15,6 +25,17 @@ export function Cake({ onCelebrate }: { onCelebrate?: () => void }) {
         origin: { y: 0.6 },
         colors: ['#FFC0CB', '#FFD700', '#87CEEB', '#98FB98']
       });
+      const sfx = fireworkSfxRef.current;
+      if (sfx) {
+        try {
+          sfx.currentTime = 0;
+        } catch {
+          // ignore
+        }
+        sfx.play().catch(() => {
+          // ignore autoplay/missing file errors
+        });
+      }
     }
   };
 
