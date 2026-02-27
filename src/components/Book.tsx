@@ -150,23 +150,28 @@ export function Book() {
                <Star className="w-8 h-8 fill-current rotate-12" />
              </div>
 
-             <h2 className="text-4xl font-hand-zh font-bold text-gray-800 mb-6 moe-text">亲爱的Qianqian，</h2>
+             <h2 className="text-4xl font-hand-zh font-bold text-gray-800 mb-6">亲爱的Qianqian，</h2>
              
-             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
-               <p className="moe-text">
+             <motion.div 
+               initial={{ opacity: 0, y: 30 }}
+               animate={flippedIndex >= 0 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+               transition={{ duration: 1, delay: 0.5 }}
+               className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed"
+             >
+               <p>
                  你在纽黑文的
                  <span 
-                   className="cursor-pointer hover:text-blue-300 transition-colors underline decoration-dotted"
+                   className="cursor-pointer hover:text-blue-300 transition-colors"
                    onClick={(e) => { e.stopPropagation(); triggerSnow(); }}
                  >
                    雪天
                  </span>
                  过得好吗？我时常在Lawn的阳光里面想念你，想念我们一起在AFC打空手道，想念我们一起在Makers Lab做手工，想念我们去逛超市，下厨，讨论INFJ的心理活动……
                </p>
-               <p className="moe-text">
+               <p>
                  遇见你就像遇见了镜子里的另一个自己，我们好像能理解对方的一些奇怪的想法和行为，能倾听对方的诉说，但是我又的确因你而拓宽了我对世界认知的边界。
                </p>
-             </div>
+             </motion.div>
              
              {showSnowman && (
                <div className="snowman">
@@ -201,14 +206,19 @@ export function Book() {
       front: (
         <div className="h-full w-full bg-white bg-grid p-10 relative border-r-4 border-gray-200 flex flex-col justify-start overflow-y-auto">
           <PageContent isVisible={flippedIndex < 2}>
-             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
-               <p className="moe-text">
+             <motion.div 
+               initial={{ opacity: 0, y: 30 }}
+               animate={flippedIndex >= 1 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+               transition={{ duration: 1, delay: 0.5 }}
+               className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed"
+             >
+               <p>
                  INFJ总喜欢在角落里观察别人，我也很喜欢观察你。在我的心里，你总是一个果断的，坚定的人，我惊讶于你小小的个子能有那么大的力量和气场。比如你组织的高中underrepresented minority女生访学活动让我一直钦佩不已。
                </p>
-               <p className="moe-text">
+               <p>
                  你会是我探索世界的好伙伴！虽然去年我们没有能如愿完成房车旅行，但是我希望我们今年可以去实现我们的梦想。如果今年不行，那就明年，后年，以后的每一年希望我们都能有机会去游览，去体验世界之大！
                </p>
-             </div>
+             </motion.div>
              
              <div className="flex justify-center mt-8 space-x-4 opacity-20">
                 <Star className="text-yellow-400 w-6 h-6" />
@@ -240,21 +250,26 @@ export function Book() {
                 <Gift className="w-16 h-16 text-purple-400" />
              </div>
              
-             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
-               <p className="moe-text">
+             <motion.div 
+               initial={{ opacity: 0, y: 30 }}
+               animate={flippedIndex >= 2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+               transition={{ duration: 1, delay: 0.5 }}
+               className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed"
+             >
+               <p>
                  最后的最后，祝你生日快乐！希望你在工作中，在生活里都快乐越来越多，烦恼越来越少，幸福越来越多，焦虑越来越少。
                </p>
-               <p className="moe-text">
+               <p>
                  如果有焦虑和难过，我随时欢迎你来找我聊聊（虽然我最近会忙于毕业），次数无限，且永久有效！
                </p>
-               <p className="font-bold text-purple-600 moe-text">
+               <p className="font-bold text-purple-600">
                  你永远是“心有猛虎，细嗅蔷薇”的勇猛女侠！
                </p>
-             </div>
+             </motion.div>
 
              <div className="mt-12 text-right">
-               <p className="font-hand-zh text-xl text-gray-600 moe-text">爱你，</p>
-               <p className="font-hand-zh text-4xl text-pink-500 font-bold mt-2 moe-text">Summer</p>
+               <p className="font-hand-zh text-xl text-gray-600">爱你，</p>
+               <p className="font-hand-zh text-4xl text-pink-500 font-bold mt-2">Summer</p>
              </div>
           </PageContent>
         </div>
