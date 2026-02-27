@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+## 生日贺卡网站
 
-# Run and deploy your AI Studio app
+这是一个使用 Vite + React + TypeScript + Tailwind 构建的翻页式生日贺卡。
 
-This contains everything you need to run your app locally.
+### 本地运行
 
-View your app in AI Studio: https://ai.studio/apps/f34e922c-b8df-4a98-a111-6ab7ea8e5e45
+- **安装依赖**:
 
-## Run Locally
+```bash
+npm install
+```
 
-**Prerequisites:**  Node.js
+- **启动开发服务器**:
 
+```bash
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 添加/替换照片
+
+推荐把图片放到 `public/images/`，然后在 `src/data/images.ts` 里把链接改成本地路径，例如：
+
+- `"/images/IMG_5043.jpg"`
+- `"/images/IMG_5035.jpg"`
+
+你也可以继续使用外链，或用 base64（`data:image/...;base64,...`）写进 `src/data/images.ts`。
+
+### 添加/替换音乐与音效
+
+浏览器通常禁止“自动播放”，所以背景音乐需要在用户第一次交互（例如翻页）后才能开始播放。
+
+当前代码默认会尝试加载以下文件：
+
+- **翻页音效**: `public/audio/page-flip.mp3`
+- **背景音乐**: `public/music/bgm.mp3`
+
+把你的 mp3 放到对应位置即可生效（翻页音效若不存在会自动回退到一个远程音效；背景音乐不存在则会静默跳过）。

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import * as Matter from 'matter-js';
+import Matter from 'matter-js';
 
 export interface CelebrationPhysicsRef {
   addItems: () => void;
@@ -7,18 +7,23 @@ export interface CelebrationPhysicsRef {
 
 const CelebrationPhysics = forwardRef<CelebrationPhysicsRef>((_, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<Matter.Engine>(Matter.Engine.create());
+  const engineRef = useRef<Matter.Engine | null>(null);
   const renderRef = useRef<Matter.Render | null>(null);
   const runnerRef = useRef<Matter.Runner | null>(null);
+  const boundsRef = useRef<Matter.Body[] | null>(null);
 
   useImperativeHandle(ref, () => ({
     addItems: () => {
-      const { world } = engineRef.current;
+      const engine = engineRef.current;
+      const container = containerRef.current;
+      if (!engine || !container) return;
+
+      const { world } = engine;
       const icons = [
         '🎁', '🎈', '🧙‍♂️', '☃️', 
         '❤️', '💖', '💝', '🧡', '💛', '💚', '💙', '💜', '💕', '💞', '💓', '💗', '✨'
       ];
-      const width = containerRef.current?.clientWidth || 450;
+      const width = container.clientWidth || 450;
       
       const newBodies = Array.from({ length: 35 }).map(() => {
         const x = width / 2 + (Math.random() - 0.5) * (width * 0.5); 
@@ -46,16 +51,24 @@ const CelebrationPhysics = forwardRef<CelebrationPhysicsRef>((_, ref) => {
   }));
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const engine = engineRef.current;
+    // Create a fresh engine per mount. This avoids StrictMode double-mount
+    // issues where a cleared engine is reused.
+    const engine = Matter.Engine.create();
+    engineRef.current = engine;
     const { world } = engine;
-    
-    const width = containerRef.current.clientWidth || 450;
-    const height = containerRef.current.clientHeight || 650;
+
+    const getSize = () => ({
+      width: container.clientWidth || 450,
+      height: container.clientHeight || 650,
+    });
+
+    let { width, height } = getSize();
 
     const render = Matter.Render.create({
-      element: containerRef.current,
+      element: container,
       engine: engine,
       options: {
         width: width,
@@ -67,22 +80,25 @@ const CelebrationPhysics = forwardRef<CelebrationPhysicsRef>((_, ref) => {
 
     renderRef.current = render;
 
-    // Boundaries - slightly wider to catch rolling items
-    const ground = Matter.Bodies.rectangle(width / 2, height + 20, width * 2, 40, { 
-      isStatic: true, 
-      render: { visible: false },
-      friction: 0.5 
-    });
-    const leftWall = Matter.Bodies.rectangle(-20, height / 2, 40, height * 2, { isStatic: true, render: { visible: false } });
-    const rightWall = Matter.Bodies.rectangle(width + 20, height / 2, 40, height * 2, { isStatic: true, render: { visible: false } });
+    const addBounds = (w: number, h: number) => {
+      // Boundaries - slightly wider to catch rolling items
+      const ground = Matter.Bodies.rectangle(w / 2, h + 20, w * 2, 40, { 
+        isStatic: true, 
+        render: { visible: false },
+        friction: 0.5 
+      });
+      const leftWall = Matter.Bodies.rectangle(-20, h / 2, 40, h * 2, { isStatic: true, render: { visible: false } });
+      const rightWall = Matter.Bodies.rectangle(w + 20, h / 2, 40, h * 2, { isStatic: true, render: { visible: false } });
+      boundsRef.current = [ground, leftWall, rightWall];
+      Matter.World.add(world, boundsRef.current);
+    };
 
-    Matter.World.add(world, [ground, leftWall, rightWall]);
+    addBounds(width, height);
 
     // Custom rendering for emojis
-    const originalRender = render as any;
-    const context = originalRender.context;
+    const context = render.context;
 
-    Matter.Events.on(render, 'afterRender', () => {
+    const afterRender = () => {
       const bodies = Matter.Composite.allBodies(world);
       
       context.textAlign = 'center';
@@ -102,33 +118,58 @@ const CelebrationPhysics = forwardRef<CelebrationPhysicsRef>((_, ref) => {
         context.fillText(body.icon, 0, 0);
         context.restore();
       });
-    });
+    };
+
+    Matter.Events.on(render, 'afterRender', afterRender);
 
     const runner = Matter.Runner.create();
     Matter.Runner.run(runner, engine);
     Matter.Render.run(render);
     runnerRef.current = runner;
 
-    if (render.canvas) {
-      render.canvas.width = width;
-      render.canvas.height = height;
-      render.canvas.style.width = `${width}px`;
-      render.canvas.style.height = `${height}px`;
+    const resize = () => {
+      const next = getSize();
+      if (!next.width || !next.height) return;
+      if (next.width === width && next.height === height) return;
+
+      width = next.width;
+      height = next.height;
+
+      Matter.Render.setSize(render, width, height);
+      if (boundsRef.current) {
+        Matter.World.remove(world, boundsRef.current);
+        boundsRef.current = null;
+      }
+      addBounds(width, height);
+    };
+
+    let ro: ResizeObserver | null = null;
+    try {
+      ro = new ResizeObserver(() => resize());
+      ro.observe(container);
+    } catch {
+      // ignore
     }
 
     return () => {
+      if (ro) ro.disconnect();
+      Matter.Events.off(render, 'afterRender', afterRender);
       Matter.Render.stop(render);
       Matter.Runner.stop(runner);
-      Matter.Engine.clear(engine);
       Matter.World.clear(world, false);
+      Matter.Engine.clear(engine);
       if (render.canvas) {
         render.canvas.remove();
       }
+      engineRef.current = null;
+      renderRef.current = null;
+      runnerRef.current = null;
+      boundsRef.current = null;
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-50" />
+    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-[200]" />
   );
 });
 

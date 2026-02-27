@@ -7,9 +7,6 @@ import { motion } from 'motion/react';
 import { Gift, PartyPopper, Cake as CakeIcon, Heart, Star, Sparkles } from 'lucide-react';
 import { IMAGES } from '../data/images';
 
-// Simple page flip sound effect (base64 for reliability)
-const PAGE_FLIP_SOUND = 'data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq'; 
-
 // Helper component for content animation
 const PageContent = ({ children, isVisible, delay = 0.3 }: { children: React.ReactNode, isVisible: boolean, delay?: number }) => {
   return (
@@ -26,6 +23,8 @@ const PageContent = ({ children, isVisible, delay = 0.3 }: { children: React.Rea
 
 export function Book() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const bgmStartedRef = useRef(false);
   const [flippedIndex, setFlippedIndex] = useState(-1);
   const [flippingIndex, setFlippingIndex] = useState(-1);
   const [snowflakes, setSnowflakes] = useState<{ id: number; left: string; delay: string; size: string }[]>([]);
@@ -36,8 +35,18 @@ export function Book() {
   const physicsRef = useRef<CelebrationPhysicsRef>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3');
+    // Prefer local assets (put files in `public/audio/...`), fallback to remote.
+    audioRef.current = new Audio('/audio/page-flip.mp3');
     audioRef.current.volume = 0.5;
+
+    bgmRef.current = new Audio('/music/bgm.mp3');
+    bgmRef.current.loop = true;
+    bgmRef.current.volume = 0.25;
+
+    const onFlipError = () => {
+      if (audioRef.current) audioRef.current.src = 'https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3';
+    };
+    audioRef.current.addEventListener('error', onFlipError, { once: true });
   }, []);
 
   const triggerSnow = () => {
@@ -90,10 +99,21 @@ export function Book() {
     }
   };
 
+  const startBgmOnce = () => {
+    if (bgmStartedRef.current) return;
+    const bgm = bgmRef.current;
+    if (!bgm) return;
+    bgmStartedRef.current = true;
+    bgm.play().catch(() => {
+      // ignore (autoplay restrictions or missing file)
+    });
+  };
+
   const handleFlip = (index: number) => {
     if (flippingIndex !== -1) return;
 
     playSound(); 
+    startBgmOnce();
     setFlippingIndex(index);
     
     if (flippedIndex === index) {
@@ -337,9 +357,6 @@ export function Book() {
       ),
       back: (
         <div className="h-full w-full bg-white p-8 flex flex-col items-center justify-center relative border-l-4 border-gray-200 overflow-hidden">
-           {/* Celebration Physics Layer */}
-           <CelebrationPhysics ref={physicsRef} />
-
            <PageContent isVisible={flippedIndex >= 3}>
              <div className="opacity-10 flex items-center justify-center h-full w-full">
                 <Sparkles className="w-24 h-24 text-gray-300" />
@@ -384,6 +401,9 @@ export function Book() {
 
   return (
     <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">
+      {/* Celebration Physics Layer (covers whole book) */}
+      <CelebrationPhysics ref={physicsRef} />
+
       {/* Snowflakes */}
       {snowflakes.map(snow => (
         <div 
