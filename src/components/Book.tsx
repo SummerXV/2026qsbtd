@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Sheet } from './Sheet';
 import { Cake } from './Cake';
 import { ZoomableImage } from './ZoomableImage';
+import CelebrationPhysics, { CelebrationPhysicsRef } from './CelebrationPhysics';
 import { motion } from 'motion/react';
 import { Gift, PartyPopper, Cake as CakeIcon, Heart, Star, Sparkles } from 'lucide-react';
 import { IMAGES } from '../data/images';
@@ -32,14 +33,11 @@ export function Book() {
   const [showInfj, setShowInfj] = useState(false);
   const [showRv, setShowRv] = useState(false);
   const [showSummerHeart, setShowSummerHeart] = useState(false);
-  const summerAudioRef = useRef<HTMLAudioElement | null>(null);
+  const physicsRef = useRef<CelebrationPhysicsRef>(null);
 
   useEffect(() => {
     audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3');
     audioRef.current.volume = 0.5;
-
-    summerAudioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-magical-sparkle-whoosh-2350.mp3');
-    summerAudioRef.current.volume = 0.4;
   }, []);
 
   const triggerSnow = () => {
@@ -76,12 +74,14 @@ export function Book() {
   const triggerSummer = () => {
     if (showSummerHeart) return;
     setShowSummerHeart(true);
-    if (summerAudioRef.current) {
-      summerAudioRef.current.currentTime = 0;
-      summerAudioRef.current.play().catch(e => console.log("Audio play failed", e));
-    }
     setTimeout(() => setShowSummerHeart(false), 3000);
   };
+
+  const handleCelebrate = React.useCallback(() => {
+    if (physicsRef.current) {
+      physicsRef.current.addItems();
+    }
+  }, []);
 
   const playSound = () => {
     if (audioRef.current) {
@@ -110,7 +110,7 @@ export function Book() {
   // Sheet 3: Page 6 (Text) / Page 7 (Blank)
   // Sheet 4: Page 8 (Cake) / Back Cover
 
-  const sheets: { front: React.ReactNode; back: React.ReactNode }[] = [
+  const sheets: { front: React.ReactNode; back: React.ReactNode }[] = React.useMemo(() => [
     // Sheet 0: Cover & Page 1
     {
       front: (
@@ -309,35 +309,37 @@ export function Book() {
                </p>
              </motion.div>
 
-             <div className="mt-12 text-right relative">
-               <p className="font-hand-zh text-xl text-gray-600">爱你，</p>
-               <div className="relative inline-block">
-                 {showSummerHeart && (
-                   <motion.div
-                     initial={{ scale: 0, opacity: 0 }}
-                     animate={{ scale: [0, 1.8, 1.5], opacity: [0, 1, 0.9] }}
-                     transition={{ duration: 1, ease: "backOut" }}
-                     className="absolute inset-0 flex items-center justify-center -z-10"
-                   >
-                     <Heart className="w-40 h-40 text-pink-500 fill-current" />
-                   </motion.div>
-                 )}
-                 <motion.p 
-                   animate={showSummerHeart ? { scale: 1.5, color: "#ec4899" } : { scale: 1, color: "#ec4899" }}
-                   transition={{ duration: 0.5 }}
-                   className="font-hand-zh text-4xl font-bold mt-2 cursor-pointer select-none"
-                   onClick={(e) => { e.stopPropagation(); triggerSummer(); }}
-                 >
-                   Summer
-                 </motion.p>
-               </div>
-             </div>
+              <div className="mt-12 text-right relative">
+                <p className="font-hand-zh text-xl text-gray-600">爱你，</p>
+                <div className="relative inline-block">
+                  {showSummerHeart && (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: [0, 1.8, 1.5], opacity: [0, 1, 0.9] }}
+                      transition={{ duration: 1, ease: "backOut" }}
+                      className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
+                    >
+                      <Heart className="w-40 h-40 text-pink-500 fill-current" />
+                    </motion.div>
+                  )}
+                  <motion.p 
+                    animate={showSummerHeart ? { scale: 1.5, color: "#ec4899" } : { scale: 1, color: "#ec4899" }}
+                    transition={{ duration: 0.5 }}
+                    className="font-hand-zh text-4xl font-bold mt-2 cursor-pointer select-none relative z-10"
+                    onClick={(e) => { e.stopPropagation(); triggerSummer(); }}
+                  >
+                    Summer
+                  </motion.p>
+                </div>
+              </div>
           </PageContent>
         </div>
       ),
       back: (
-        <div className="h-full w-full bg-white p-8 flex flex-col items-center justify-center relative border-l-4 border-gray-200">
-           {/* Blank Page as requested */}
+        <div className="h-full w-full bg-white p-8 flex flex-col items-center justify-center relative border-l-4 border-gray-200 overflow-hidden">
+           {/* Celebration Physics Layer */}
+           <CelebrationPhysics ref={physicsRef} />
+
            <PageContent isVisible={flippedIndex >= 3}>
              <div className="opacity-10 flex items-center justify-center h-full w-full">
                 <Sparkles className="w-24 h-24 text-gray-300" />
@@ -358,9 +360,9 @@ export function Book() {
                 ))}
              </div>
 
-             <div className="absolute inset-0 flex items-center justify-center scale-150">
-               <Cake />
-             </div>
+              <div className="absolute inset-0 flex items-center justify-center p-8">
+                <Cake onCelebrate={handleCelebrate} />
+              </div>
              
              <div className="absolute bottom-12 flex space-x-6 opacity-40">
                 <Star className="text-yellow-300 w-6 h-6" />
@@ -378,7 +380,7 @@ export function Book() {
         </div>
       )
     }
-  ];
+  ], [flippedIndex, showSnowman, showInfj, showRv, showSummerHeart, handleCelebrate]);
 
   return (
     <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">
