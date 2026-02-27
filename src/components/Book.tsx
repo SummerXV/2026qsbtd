@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Sheet } from './Sheet';
 import { Cake } from './Cake';
 import { ZoomableImage } from './ZoomableImage';
-import CelebrationPhysics, { CelebrationPhysicsRef } from './CelebrationPhysics';
+import { CelebrationEmojiRain, CelebrationEmojiRainRef } from './CelebrationEmojiRain';
 import { motion } from 'motion/react';
 import { Gift, PartyPopper, Cake as CakeIcon, Heart, Star, Sparkles } from 'lucide-react';
 import { IMAGES } from '../data/images';
@@ -32,7 +32,7 @@ export function Book() {
   const [showInfj, setShowInfj] = useState(false);
   const [showRv, setShowRv] = useState(false);
   const [showSummerHeart, setShowSummerHeart] = useState(false);
-  const physicsRef = useRef<CelebrationPhysicsRef>(null);
+  const rainRef = useRef<CelebrationEmojiRainRef>(null);
 
   useEffect(() => {
     // Prefer local assets (put files in `public/audio/...`), fallback to remote.
@@ -87,9 +87,7 @@ export function Book() {
   };
 
   const handleCelebrate = React.useCallback(() => {
-    if (physicsRef.current) {
-      physicsRef.current.addItems();
-    }
+    rainRef.current?.celebrate();
   }, []);
 
   const playSound = () => {
@@ -401,8 +399,10 @@ export function Book() {
 
   return (
     <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">
-      {/* Celebration Physics Layer (covers whole book) */}
-      <CelebrationPhysics ref={physicsRef} />
+      {/* Emoji rain overlay: exactly the left page (left half) */}
+      <div className="absolute left-0 top-0 w-1/2 h-full pointer-events-none z-[1000] overflow-hidden">
+        <CelebrationEmojiRain ref={rainRef} />
+      </div>
 
       {/* Snowflakes */}
       {snowflakes.map(snow => (

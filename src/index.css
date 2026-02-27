@@ -114,3 +114,10 @@ body {
 .rotate-y-180 {
   transform: rotateY(-180deg);
 }
+
+.celebration-emoji {
+  position: absolute;
+  will-change: transform, opacity;
+  user-select: none;
+  text-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
