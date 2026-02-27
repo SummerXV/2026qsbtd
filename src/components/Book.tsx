@@ -31,10 +31,15 @@ export function Book() {
   const [showSnowman, setShowSnowman] = useState(false);
   const [showInfj, setShowInfj] = useState(false);
   const [showRv, setShowRv] = useState(false);
+  const [showSummerHeart, setShowSummerHeart] = useState(false);
+  const summerAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3');
     audioRef.current.volume = 0.5;
+
+    summerAudioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-magical-sparkle-whoosh-2350.mp3');
+    summerAudioRef.current.volume = 0.4;
   }, []);
 
   const triggerSnow = () => {
@@ -66,6 +71,16 @@ export function Book() {
     if (showRv) return;
     setShowRv(true);
     setTimeout(() => setShowRv(false), 6500);
+  };
+
+  const triggerSummer = () => {
+    if (showSummerHeart) return;
+    setShowSummerHeart(true);
+    if (summerAudioRef.current) {
+      summerAudioRef.current.currentTime = 0;
+      summerAudioRef.current.play().catch(e => console.log("Audio play failed", e));
+    }
+    setTimeout(() => setShowSummerHeart(false), 3000);
   };
 
   const playSound = () => {
@@ -294,9 +309,28 @@ export function Book() {
                </p>
              </motion.div>
 
-             <div className="mt-12 text-right">
+             <div className="mt-12 text-right relative">
                <p className="font-hand-zh text-xl text-gray-600">爱你，</p>
-               <p className="font-hand-zh text-4xl text-pink-500 font-bold mt-2">Summer</p>
+               <div className="relative inline-block">
+                 {showSummerHeart && (
+                   <motion.div
+                     initial={{ scale: 0, opacity: 0 }}
+                     animate={{ scale: [0, 1.8, 1.5], opacity: [0, 1, 0.9] }}
+                     transition={{ duration: 1, ease: "backOut" }}
+                     className="absolute inset-0 flex items-center justify-center -z-10"
+                   >
+                     <Heart className="w-40 h-40 text-pink-500 fill-current" />
+                   </motion.div>
+                 )}
+                 <motion.p 
+                   animate={showSummerHeart ? { scale: 1.5, color: "#ec4899" } : { scale: 1, color: "#ec4899" }}
+                   transition={{ duration: 0.5 }}
+                   className="font-hand-zh text-4xl font-bold mt-2 cursor-pointer select-none"
+                   onClick={(e) => { e.stopPropagation(); triggerSummer(); }}
+                 >
+                   Summer
+                 </motion.p>
+               </div>
              </div>
           </PageContent>
         </div>
@@ -324,7 +358,7 @@ export function Book() {
                 ))}
              </div>
 
-             <div className="flex-1 flex items-center justify-center scale-125">
+             <div className="absolute inset-0 flex items-center justify-center scale-150">
                <Cake />
              </div>
              
