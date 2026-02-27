@@ -16,6 +16,13 @@ npm install
 npm run dev
 ```
 
+### 发布到 GitHub Pages
+
+1. 在 GitHub 仓库打开 **Settings → Pages**。
+2. **Build and deployment** 选择 **Source: GitHub Actions**。
+3. 推送到 `main` 分支后会自动触发部署，部署地址通常是：
+   - `https://SummerXV.github.io/2026qsbtd/`
+
 ### 添加/替换照片
 
 推荐把图片放到 `public/images/`，然后在 `src/data/images.ts` 里把链接改成本地路径，例如：

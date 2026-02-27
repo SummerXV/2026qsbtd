@@ -10,13 +10,13 @@
 
 export const IMAGES = {
   // Page 1: Graduation Photos
-  IMG_5043: "https://picsum.photos/seed/IMG_5043/600/800", // Replace with Graduation Single Photo
-  IMG_5035: "https://picsum.photos/seed/IMG_5035/600/800", // Replace with Graduation Kiss Photo
+  IMG_5043: "/images/IMG_5043.jpeg", // Replace with Graduation Single Photo
+  IMG_5035: "/images/IMG_5035.jpeg", // Replace with Graduation Kiss Photo
 
   // Page 3: More Memories
-  IMG_8431: "https://picsum.photos/seed/IMG_8431/600/800", // Replace with Graduation Playful Photo
-  IMG_8434: "https://picsum.photos/seed/IMG_8434/600/800", // Replace with Field Side Profile Photo
+  IMG_8431: "/images/IMG_8431.jpeg", // Replace with Graduation Playful Photo
+  IMG_8434: "/images/IMG_8434.jpeg", // Replace with Field Side Profile Photo
 
   // Page 5: Special Photo
-  QIAN_17: "https://picsum.photos/seed/Qian17/600/800",   // Replace with Field Sunset Photo
+  QIAN_17: "/images/25.5.17Qian-17.JPG",   // Replace with Field Sunset Photo
 };
