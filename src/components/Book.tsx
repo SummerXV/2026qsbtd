@@ -27,11 +27,32 @@ export function Book() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [flippedIndex, setFlippedIndex] = useState(-1);
   const [flippingIndex, setFlippingIndex] = useState(-1);
+  const [snowflakes, setSnowflakes] = useState<{ id: number; left: string; delay: string; size: string }[]>([]);
+  const [showSnowman, setShowSnowman] = useState(false);
 
   useEffect(() => {
     audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3');
     audioRef.current.volume = 0.5;
   }, []);
+
+  const triggerSnow = () => {
+    if (showSnowman) return; // Prevent multiple triggers at once
+    
+    setShowSnowman(true);
+    const newSnow = Array.from({ length: 50 }).map((_, i) => ({
+      id: Date.now() + i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 3}s`,
+      size: `${0.5 + Math.random() * 2}rem`
+    }));
+    setSnowflakes(prev => [...prev, ...newSnow]);
+    
+    // Cleanup after animation
+    setTimeout(() => {
+      setSnowflakes(prev => prev.filter(s => !newSnow.find(ns => ns.id === s.id)));
+      setShowSnowman(false);
+    }, 7000);
+  };
 
   const playSound = () => {
     if (audioRef.current) {
@@ -123,21 +144,38 @@ export function Book() {
     // Sheet 1: Page 2 (Text) & Page 3 (Photos)
     {
       front: (
-        <div className="h-full w-full bg-white bg-grid p-8 relative border-r-4 border-gray-200 flex flex-col justify-center">
+        <div className="h-full w-full bg-white bg-grid p-10 relative border-r-4 border-gray-200 flex flex-col justify-start overflow-y-auto">
           <PageContent isVisible={flippedIndex < 1}>
-             <div className="absolute top-6 right-6 text-yellow-400">
+             <div className="absolute top-4 right-6 text-yellow-400 opacity-30">
                <Star className="w-8 h-8 fill-current rotate-12" />
              </div>
 
-             <h2 className="text-4xl font-heading font-bold text-gray-800 mb-6">Dear You,</h2>
+             <h2 className="text-4xl font-hand-zh font-bold text-gray-800 mb-6 moe-text">亲爱的Qianqian，</h2>
              
-             <p className="font-hand text-xl text-gray-700 leading-loose mb-6">
-               Another year around the sun! I'm so incredibly proud of everything you've achieved this year.
-               From the big milestones to the small quiet moments, you've handled it all with grace and that smile I love.
-             </p>
+             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
+               <p className="moe-text">
+                 你在纽黑文的
+                 <span 
+                   className="cursor-pointer hover:text-blue-300 transition-colors underline decoration-dotted"
+                   onClick={(e) => { e.stopPropagation(); triggerSnow(); }}
+                 >
+                   雪天
+                 </span>
+                 过得好吗？我时常在Lawn的阳光里面想念你，想念我们一起在AFC打空手道，想念我们一起在Makers Lab做手工，想念我们去逛超市，下厨，讨论INFJ的心理活动……
+               </p>
+               <p className="moe-text">
+                 遇见你就像遇见了镜子里的另一个自己，我们好像能理解对方的一些奇怪的想法和行为，能倾听对方的诉说，但是我又的确因你而拓宽了我对世界认知的边界。
+               </p>
+             </div>
              
-             <div className="absolute bottom-8 right-8 text-pink-300 opacity-50">
-               <Heart className="w-12 h-12 fill-current" />
+             {showSnowman && (
+               <div className="snowman">
+                 ☃️
+               </div>
+             )}
+             
+             <div className="absolute bottom-6 right-8 text-pink-300 opacity-30">
+               <Heart className="w-10 h-10 fill-current" />
              </div>
           </PageContent>
         </div>
@@ -161,18 +199,18 @@ export function Book() {
     // Sheet 2: Page 4 (Text) & Page 5 (Photo)
     {
       front: (
-        <div className="h-full w-full bg-white bg-grid p-8 relative border-r-4 border-gray-200 flex flex-col justify-center">
+        <div className="h-full w-full bg-white bg-grid p-10 relative border-r-4 border-gray-200 flex flex-col justify-start overflow-y-auto">
           <PageContent isVisible={flippedIndex < 2}>
-             <h2 className="text-3xl font-heading font-bold text-gray-800 mb-6 text-center">Cherished Moments</h2>
+             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
+               <p className="moe-text">
+                 INFJ总喜欢在角落里观察别人，我也很喜欢观察你。在我的心里，你总是一个果断的，坚定的人，我惊讶于你小小的个子能有那么大的力量和气场。比如你组织的高中underrepresented minority女生访学活动让我一直钦佩不已。
+               </p>
+               <p className="moe-text">
+                 你会是我探索世界的好伙伴！虽然去年我们没有能如愿完成房车旅行，但是我希望我们今年可以去实现我们的梦想。如果今年不行，那就明年，后年，以后的每一年希望我们都能有机会去游览，去体验世界之大！
+               </p>
+             </div>
              
-             <p className="font-hand text-xl text-gray-700 leading-loose text-center">
-               "Life is not measured by the number of breaths we take, but by the moments that take our breath away."
-             </p>
-             <p className="font-hand text-lg text-gray-500 mt-4 text-center italic">
-               Here's to creating a million more of those moments together.
-             </p>
-             
-             <div className="flex justify-center mt-8 space-x-4">
+             <div className="flex justify-center mt-8 space-x-4 opacity-20">
                 <Star className="text-yellow-400 w-6 h-6" />
                 <Star className="text-yellow-400 w-6 h-6" />
                 <Star className="text-yellow-400 w-6 h-6" />
@@ -196,23 +234,27 @@ export function Book() {
     // Sheet 3: Page 6 (Text) & Page 7 (Blank)
     {
       front: (
-        <div className="h-full w-full bg-white bg-grid p-8 relative border-r-4 border-gray-200 flex flex-col justify-center">
+        <div className="h-full w-full bg-white bg-grid p-10 relative border-r-4 border-gray-200 flex flex-col justify-start overflow-y-auto">
           <PageContent isVisible={flippedIndex < 3}>
-             <div className="absolute top-10 left-10 opacity-20">
+             <div className="absolute top-6 left-10 opacity-10">
                 <Gift className="w-16 h-16 text-purple-400" />
              </div>
              
-             <p className="font-hand text-xl text-gray-700 leading-loose mb-6 text-center">
-               You bring so much light into this world. Your kindness, your humor, and your strength inspire me every day.
-             </p>
-             
-             <p className="font-hand text-xl text-gray-700 leading-loose text-center font-bold">
-               Don't ever change!
-             </p>
+             <div className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed">
+               <p className="moe-text">
+                 最后的最后，祝你生日快乐！希望你在工作中，在生活里都快乐越来越多，烦恼越来越少，幸福越来越多，焦虑越来越少。
+               </p>
+               <p className="moe-text">
+                 如果有焦虑和难过，我随时欢迎你来找我聊聊（虽然我最近会忙于毕业），次数无限，且永久有效！
+               </p>
+               <p className="font-bold text-purple-600 moe-text">
+                 你永远是“心有猛虎，细嗅蔷薇”的勇猛女侠！
+               </p>
+             </div>
 
-             <div className="absolute bottom-12 right-12 text-right">
-               <p className="font-hand text-lg text-gray-700">With all my love,</p>
-               <p className="font-hand text-2xl text-purple-500 font-bold mt-1">Me</p>
+             <div className="mt-12 text-right">
+               <p className="font-hand-zh text-xl text-gray-600 moe-text">爱你，</p>
+               <p className="font-hand-zh text-4xl text-pink-500 font-bold mt-2 moe-text">Summer</p>
              </div>
           </PageContent>
         </div>
@@ -264,6 +306,17 @@ export function Book() {
 
   return (
     <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">
+      {/* Snowflakes */}
+      {snowflakes.map(snow => (
+        <div 
+          key={snow.id} 
+          className="snowflake" 
+          style={{ left: snow.left, animationDelay: snow.delay, fontSize: snow.size }}
+        >
+          ❄
+        </div>
+      ))}
+
       {/* Book Spine/Back Cover visual aid */}
       <div className="absolute left-1/2 top-0 bottom-0 w-8 bg-gray-300 -translate-x-1/2 rounded-sm z-0 shadow-inner"></div>
 

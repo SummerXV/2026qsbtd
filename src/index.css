@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Patrick+Hand&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&family=ZCOOL+KuaiLe&family=ZCOOL+XiaoWei&family=Long+Cang&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-hand: "Patrick Hand", cursive;
+  --font-hand-zh: "Long Cang", cursive;
   --font-heading: "Fredoka", sans-serif;
 }
 
@@ -17,11 +18,48 @@ body {
   min-height: 100vh;
 }
 
+.font-hand-zh {
+  font-family: var(--font-hand-zh);
+}
+
 .bg-grid {
   background-size: 40px 40px;
   background-image:
     linear-gradient(to right, rgba(180, 83, 9, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(180, 83, 9, 0.03) 1px, transparent 1px);
+}
+
+@keyframes snow {
+  0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) translateX(100px) rotate(720deg); opacity: 0; }
+}
+
+.snowflake {
+  position: fixed;
+  top: -10%;
+  color: white;
+  pointer-events: none;
+  z-index: 9999;
+  animation: snow 4s linear forwards;
+  text-shadow: 0 0 10px rgba(255,255,255,1);
+  font-size: 2rem;
+}
+
+@keyframes snowman-peek {
+  0% { transform: translateY(100%) rotate(10deg); }
+  20% { transform: translateY(0) rotate(0deg); }
+  80% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(100%) rotate(-10deg); }
+}
+
+.snowman {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  font-size: 80px;
+  pointer-events: none;
+  z-index: 50;
+  animation: snowman-peek 6s ease-in-out forwards;
 }
 
 .perspective-1000 {
