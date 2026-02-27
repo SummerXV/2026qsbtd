@@ -29,6 +29,8 @@ export function Book() {
   const [flippingIndex, setFlippingIndex] = useState(-1);
   const [snowflakes, setSnowflakes] = useState<{ id: number; left: string; delay: string; size: string }[]>([]);
   const [showSnowman, setShowSnowman] = useState(false);
+  const [showInfj, setShowInfj] = useState(false);
+  const [showRv, setShowRv] = useState(false);
 
   useEffect(() => {
     audioRef.current = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-paper-slide-1530.mp3');
@@ -52,6 +54,18 @@ export function Book() {
       setSnowflakes(prev => prev.filter(s => !newSnow.find(ns => ns.id === s.id)));
       setShowSnowman(false);
     }, 7000);
+  };
+
+  const triggerInfj = () => {
+    if (showInfj) return;
+    setShowInfj(true);
+    setTimeout(() => setShowInfj(false), 3000);
+  };
+
+  const triggerRv = () => {
+    if (showRv) return;
+    setShowRv(true);
+    setTimeout(() => setShowRv(false), 6500);
   };
 
   const playSound = () => {
@@ -213,10 +227,23 @@ export function Book() {
                className="font-hand-zh text-2xl text-gray-700 space-y-8 leading-relaxed"
              >
                <p>
-                 INFJ总喜欢在角落里观察别人，我也很喜欢观察你。在我的心里，你总是一个果断的，坚定的人，我惊讶于你小小的个子能有那么大的力量和气场。比如你组织的高中underrepresented minority女生访学活动让我一直钦佩不已。
+                 <span 
+                   className="cursor-pointer hover:text-green-500 transition-colors"
+                   onClick={(e) => { e.stopPropagation(); triggerInfj(); }}
+                 >
+                   INFJ
+                 </span>
+                 总喜欢在角落里观察别人，我也很喜欢观察你。在我的心里，你总是一个果断的，坚定的人，我惊讶于你小小的个子能有那么大的力量和气场。比如你组织的高中underrepresented minority女生访学活动让我一直钦佩不已。
                </p>
                <p>
-                 你会是我探索世界的好伙伴！虽然去年我们没有能如愿完成房车旅行，但是我希望我们今年可以去实现我们的梦想。如果今年不行，那就明年，后年，以后的每一年希望我们都能有机会去游览，去体验世界之大！
+                 你会是我探索世界的好伙伴！虽然去年我们没有能如愿完成
+                 <span 
+                   className="cursor-pointer hover:text-orange-400 transition-colors"
+                   onClick={(e) => { e.stopPropagation(); triggerRv(); }}
+                 >
+                   房车旅行
+                 </span>
+                 ，但是我希望我们今年可以去实现我们的梦想。如果今年不行，那就明年，后年，以后的每一年希望我们都能有机会去游览，去体验世界之大！
                </p>
              </motion.div>
              
@@ -332,8 +359,22 @@ export function Book() {
         </div>
       ))}
 
+      {/* INFJ Runner */}
+      {showInfj && (
+        <div className="infj-runner">
+          🧙‍♂️
+        </div>
+      )}
+
       {/* Book Spine/Back Cover visual aid */}
       <div className="absolute left-1/2 top-0 bottom-0 w-8 bg-gray-300 -translate-x-1/2 rounded-sm z-0 shadow-inner"></div>
+
+      {/* RV Runner - Now inside the relative container to orbit the book */}
+      {showRv && (
+        <div className="rv-runner">
+          🚐
+        </div>
+      )}
 
       {sheets.map((sheet, i) => {
         const isFlipped = i <= flippedIndex;

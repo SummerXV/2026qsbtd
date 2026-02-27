@@ -62,6 +62,43 @@ body {
   animation: snowman-peek 6s ease-in-out forwards;
 }
 
+@keyframes run-left {
+  0% { transform: translateX(100vw) scaleX(-1); }
+  100% { transform: translateX(-100vw) scaleX(-1); }
+}
+
+@keyframes orbit-book {
+  /* Starting from bottom-right, moving clockwise, with mirrored icon */
+  0% { left: 100%; top: 100%; transform: rotate(180deg) scaleX(-1); } 
+  25% { left: -60px; top: 100%; transform: rotate(180deg) scaleX(-1); }
+  30% { left: -60px; top: 100%; transform: rotate(-90deg) scaleX(-1); } 
+  50% { left: -60px; top: -60px; transform: rotate(-90deg) scaleX(-1); } 
+  55% { left: -60px; top: -60px; transform: rotate(0deg) scaleX(-1); } 
+  75% { left: 100%; top: -60px; transform: rotate(0deg) scaleX(-1); } 
+  80% { left: 100%; top: -60px; transform: rotate(90deg) scaleX(-1); } 
+  100% { left: 100%; top: 100%; transform: rotate(90deg) scaleX(-1); } 
+}
+
+.rv-runner {
+  position: absolute;
+  font-size: 60px;
+  pointer-events: none;
+  z-index: 10001;
+  animation: orbit-book 6s linear forwards;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.infj-runner {
+  position: fixed;
+  bottom: 20%;
+  right: 0;
+  font-size: 120px;
+  pointer-events: none;
+  z-index: 10000;
+  animation: run-left 2.5s linear forwards;
+  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
+}
+
 .perspective-1000 {
   perspective: 1500px; /* Increased perspective for better 3D look */
 }
