@@ -1,13 +1,14 @@
 import { motion } from 'motion/react';
 import React, { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
+import { getPublicBaseUrl } from '../utils/baseUrl';
 
 export function Cake({ onCelebrate, resetToken }: { onCelebrate?: () => void; resetToken?: number }) {
   const [candlesBlown, setCandlesBlown] = useState(false);
   const fireworkSfxRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const base = import.meta.env.BASE_URL;
+    const base = getPublicBaseUrl();
     fireworkSfxRef.current = new Audio(`${base}music/firework.mp3`);
     fireworkSfxRef.current.volume = 0.7;
   }, []);

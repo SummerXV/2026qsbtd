@@ -5,6 +5,7 @@ import { ZoomableImage } from './ZoomableImage';
 import { CelebrationEmojiRain, CelebrationEmojiRainRef } from './CelebrationEmojiRain';
 import { motion } from 'motion/react';
 import { Gift, PartyPopper, Cake as CakeIcon, Heart, Star, Sparkles } from 'lucide-react';
+import { getPublicBaseUrl } from '../utils/baseUrl';
 import { IMAGES } from '../data/images';
 
 // Helper component for content animation
@@ -36,8 +37,8 @@ export function Book() {
   const [showSummerHeart, setShowSummerHeart] = useState(false);
   const rainRef = useRef<CelebrationEmojiRainRef>(null);
 
-  const base = import.meta.env.BASE_URL;
   useEffect(() => {
+    const base = getPublicBaseUrl();
     // Page flip sound
     flipSfxRef.current = new Audio(`${base}music/ding.mp3`);
     flipSfxRef.current.volume = 0.3;
@@ -50,7 +51,7 @@ export function Book() {
     bgmRef.current = new Audio(`${base}music/happy_birthday.mp3`);
     bgmRef.current.loop = true;
     bgmRef.current.volume = 0.22;
-  }, [base]);
+  }, []);
 
   const triggerSnow = () => {
     if (showSnowman) return; // Prevent multiple triggers at once

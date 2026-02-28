@@ -8,7 +8,9 @@
 //    OR
 //    Upload your images to a hosting service (or the public folder if downloading the code) and replace the URLs with the paths.
 
-const base = import.meta.env.BASE_URL;
+import { getPublicBaseUrl } from '../utils/baseUrl';
+
+const base = getPublicBaseUrl();
 
 export const IMAGES = {
   // Page 1: Graduation Photos
