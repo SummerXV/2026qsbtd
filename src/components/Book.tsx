@@ -36,20 +36,21 @@ export function Book() {
   const [showSummerHeart, setShowSummerHeart] = useState(false);
   const rainRef = useRef<CelebrationEmojiRainRef>(null);
 
+  const base = import.meta.env.BASE_URL;
   useEffect(() => {
     // Page flip sound
-    flipSfxRef.current = new Audio('/music/ding.mp3');
+    flipSfxRef.current = new Audio(`${base}music/ding.mp3`);
     flipSfxRef.current.volume = 0.3;
 
     // RV sound
-    carSfxRef.current = new Audio('/music/car.mp3');
+    carSfxRef.current = new Audio(`${base}music/car.mp3`);
     carSfxRef.current.volume = 0.55;
 
     // Background music (starts on first user interaction; loops forever)
-    bgmRef.current = new Audio('/music/happy_birthday.mp3');
+    bgmRef.current = new Audio(`${base}music/happy_birthday.mp3`);
     bgmRef.current.loop = true;
     bgmRef.current.volume = 0.22;
-  }, []);
+  }, [base]);
 
   const triggerSnow = () => {
     if (showSnowman) return; // Prevent multiple triggers at once

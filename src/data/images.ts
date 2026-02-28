@@ -8,15 +8,17 @@
 //    OR
 //    Upload your images to a hosting service (or the public folder if downloading the code) and replace the URLs with the paths.
 
+const base = import.meta.env.BASE_URL;
+
 export const IMAGES = {
   // Page 1: Graduation Photos
-  IMG_5043: "/images/IMG_5043.jpeg", // Replace with Graduation Single Photo
-  IMG_5035: "/images/IMG_5035.jpeg", // Replace with Graduation Kiss Photo
+  IMG_5043: `${base}images/IMG_5043.jpeg`, // Replace with Graduation Single Photo
+  IMG_5035: `${base}images/IMG_5035.jpeg`, // Replace with Graduation Kiss Photo
 
   // Page 3: More Memories
-  IMG_8431: "/images/IMG_8431.jpeg", // Replace with Graduation Playful Photo
-  IMG_8434: "/images/IMG_8434.jpeg", // Replace with Field Side Profile Photo
+  IMG_8431: `${base}images/IMG_8431.jpeg`, // Replace with Graduation Playful Photo
+  IMG_8434: `${base}images/IMG_8434.jpeg`, // Replace with Field Side Profile Photo
 
   // Page 5: Special Photo
-  QIAN_17: "/images/25.5.17Qian-17.JPG",   // Replace with Field Sunset Photo
+  QIAN_17: `${base}images/25.5.17Qian-17.JPG`,   // Replace with Field Sunset Photo
 };

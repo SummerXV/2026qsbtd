@@ -44,3 +44,5 @@ npm run dev
 - **房车音效（点击“房车旅行”时）**: `public/music/car.mp3`
 
 把你的 mp3 放到对应位置即可生效（浏览器通常禁止无交互自动播放，所以背景音乐会在首次翻页或点击 `Open Card` 后开始播放）。
+
+love from Summer

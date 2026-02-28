@@ -7,7 +7,8 @@ export function Cake({ onCelebrate, resetToken }: { onCelebrate?: () => void; re
   const fireworkSfxRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    fireworkSfxRef.current = new Audio('/music/firework.mp3');
+    const base = import.meta.env.BASE_URL;
+    fireworkSfxRef.current = new Audio(`${base}music/firework.mp3`);
     fireworkSfxRef.current.volume = 0.7;
   }, []);
 
