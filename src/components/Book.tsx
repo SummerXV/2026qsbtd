@@ -431,7 +431,7 @@ export function Book() {
   ], [flippedIndex, showSnowman, showInfj, showRv, showSummerHeart, cakeResetToken, handleCelebrate]);
 
   return (
-    <div className="relative w-[500px] md:w-[900px] h-[550px] md:h-[650px] perspective-1000 mx-auto my-10 select-none">
+    <div className="relative w-full h-full perspective-1000 select-none">
       {/* Emoji rain overlay: exactly the left page (left half) */}
       <div className="absolute left-0 top-0 w-1/2 h-full pointer-events-none z-[1000] overflow-hidden">
         <CelebrationEmojiRain ref={rainRef} />
